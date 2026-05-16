@@ -532,10 +532,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </div>
 
 <script>
-// ─────────────────────────────────────────
+// ─── CONFIG ───────────────────────────────
 const SUPABASE_URL = 'https://yukyudkgudkaeqemagg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5dWt5dWRrZ3Vka2FlcWVtYWdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzIyMDQsImV4cCI6MjA5NDQ0ODIwNH0.NVu3inNPHl1GH-SXBbMqU0hyDiUxCLwuw-HwVJEEEM0';
-// ─────────────────────────────────────────
+// ──────────────────────────────────────────
 
 const COLORS=['#7c6af7','#f87171','#4ade80','#fbbf24','#60a5fa','#f472b6','#34d399','#fb923c','#a78bfa','#38bdf8'];
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -579,9 +579,18 @@ async function initDB(){
   setLoadMsg('Connecting...');
   try{
     db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    // Test connection with a simple query
+    const{error:testErr}=await db.from('settings').select('id').limit(1);
+    if(testErr){
+      console.error('Supabase connection test failed:',testErr);
+      setLoadMsg('DB error: '+testErr.message);
+      setTimeout(async()=>{await loadLocal();hideLoading();},2000);
+      return;
+    }
     await loadState();
   }catch(e){
-    setLoadMsg('Using local storage');
+    console.error('initDB error:',e);
+    setLoadMsg('Using local storage: '+e.message);
     await loadLocal();
   }
   hideLoading();
@@ -645,11 +654,20 @@ async function upsertRow(table,id,data){
   if(!db){localStorage.setItem('pm:'+table,JSON.stringify(data));return;}
   showSync();
   const{error}=await db.from(table).upsert({id,data,updated_at:new Date().toISOString()});
-  if(!error)showSync('Saved ✓');
+  if(error){
+    console.error('Supabase upsert error on',table,error);
+    notify('Sync error',error.message||'Could not save to database','⚠️');
+  } else {
+    showSync('Saved ✓');
+  }
 }
 async function deleteRow(table,id){
   if(!db)return;showSync();
-  await db.from(table).delete().eq('id',id);showSync('Saved ✓');
+  const{error}=await db.from(table).delete().eq('id',id);
+  if(error){
+    console.error('Supabase delete error on',table,error);
+    notify('Sync error',error.message||'Could not delete from database','⚠️');
+  } else { showSync('Saved ✓'); }
 }
 async function saveProjects(){
   if(!db){localStorage.setItem('pm:projects',JSON.stringify(S.projects));return;}
