@@ -235,7 +235,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .macts-left{margin-right:auto;display:flex;gap:8px}
 
 /* CONFIRM DIALOG */
-.confirm-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px)}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px)}
 .confirm-overlay.hidden{display:none}
 .confirm-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;width:320px;max-width:90%}
 .confirm-box h3{font-size:16px;font-weight:600;margin-bottom:8px}
@@ -294,7 +294,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 @media(min-width:641px){
   .moverlay{align-items:center}
   .modal{border-radius:14px;max-width:520px;width:100%}
-  .confirm-overlay{position:absolute}
 }
 </style>
 </head>
@@ -520,7 +519,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </div>
 
 <!-- CONFIRM DIALOG -->
-<div id="confirm-overlay" class="confirm-overlay hidden" style="position:absolute">
+<div id="confirm-overlay" class="confirm-overlay hidden" style="position:fixed">
   <div class="confirm-box">
     <h3 id="confirm-title">Are you sure?</h3>
     <p id="confirm-msg">This action cannot be undone.</p>
