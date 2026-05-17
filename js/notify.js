@@ -71,27 +71,7 @@ async function initPushNotifications() {
     console.warn('[Push] Init error:', e);
   }
 }
-async function requestNotifPermission() {
-  try {
-    const permission = await Notification.requestPermission();
-    console.log('[Push] Permission:', permission);
-    if (permission === 'granted') {
-      hideNotifPrompt();
-      notify('🔔 Notifications enabled', 'You\'ll get alerts for deadlines and pomodoros', '✅');
-      await subscribeToPush();
-      setTimeout(checkDeadlinesOnLoad, 1000);
-    } else {
-      notify('Notifications blocked', 'You can enable them in browser settings', '⚠️');
-    }
-  } catch(e) {
-    console.warn('[Push] Permission error:', e);
-  }
-}
 
-function hideNotifPrompt() {
-  const el = document.getElementById('notif-prompt');
-  if (el) el.style.display = 'none';
-}
 async function subscribeToPush() {
   if (!swRegistration) return;
   try {
@@ -122,12 +102,38 @@ async function subscribeToPush() {
 }
 
 // Fire push via SW message — works when tab is open or backgrounded
-function notifyViaSW(type, data) {
-  if (!swRegistration?.active) {
-    console.warn('[SW] No active SW to message');
+async function notifyViaSW(type, data) {
+  // Try SW message first
+  if (swRegistration?.active) {
+    swRegistration.active.postMessage({ type, ...data });
     return;
   }
-  swRegistration.active.postMessage({ type, ...data });
+  // Fallback — use showNotification directly if SW is ready
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (reg) {
+      reg.active?.postMessage({ type, ...data });
+      // Also show directly as fallback
+      if (Notification.permission === 'granted') {
+        const title = type === 'POMO_COMPLETE' ? '🍅 Pomodoro Complete!' : '☕ Break Over!';
+        const body = data.body || (type === 'POMO_COMPLETE' ? 'Time for a break!' : 'Ready to focus?');
+        reg.showNotification(title, {
+          body,
+          icon: '/WorkFlow/favicon.ico',
+          vibrate: [200, 100, 200],
+          tag: 'pomodoro',
+          renotify: true,
+        });
+      }
+    }
+  } catch(e) {
+    console.warn('[SW] notifyViaSW error:', e);
+    // Last resort — basic Notification API
+    if (Notification.permission === 'granted') {
+      const title = type === 'POMO_COMPLETE' ? '🍅 Pomodoro Complete!' : '☕ Break Over!';
+      new Notification(title, { body: data.body || '' });
+    }
+  }
 }
 
 // Fire push via Edge Function — reaches all subscribed devices
