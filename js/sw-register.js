@@ -1,16 +1,29 @@
 // ── Service Worker Registration ──
-let swReady = null; // Promise that resolves when SW is ready
+// Auto-detect base path for GitHub Pages subfolder support
+const SW_PATH = new URL('sw.js', document.baseURI).href;
+const SW_SCOPE = new URL('./', document.baseURI).href;
+
+let swReady = null;
 
 if ('serviceWorker' in navigator) {
+  // Unregister any stale service workers first
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => {
+      if (!reg.scope.includes(SW_SCOPE)) {
+        reg.unregister();
+        console.log('[SW] Unregistered stale SW:', reg.scope);
+      }
+    });
+  });
+
   swReady = new Promise(async (resolve) => {
     try {
-      const reg = await navigator.serviceWorker.register('/Workflow/sw.js', { scope: '/Workflow/' });
+      console.log('[SW] Registering at:', SW_PATH, 'scope:', SW_SCOPE);
+      const reg = await navigator.serviceWorker.register(SW_PATH, { scope: SW_SCOPE });
       console.log('[SW] Registered:', reg.scope);
 
-      // Check for updates every 60 seconds
       setInterval(() => reg.update(), 60000);
 
-      // Tell SW to skip waiting if there's a new version
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       reg.addEventListener('updatefound', () => {
         const newSW = reg.installing;
@@ -21,9 +34,8 @@ if ('serviceWorker' in navigator) {
         });
       });
 
-      // Wait until SW is active
       const ready = await navigator.serviceWorker.ready;
-      console.log('[SW] Ready');
+      console.log('[SW] Ready:', ready.scope);
       resolve(ready);
     } catch(e) {
       console.warn('[SW] Registration failed:', e);
