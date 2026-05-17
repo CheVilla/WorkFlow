@@ -1,6 +1,7 @@
 // ── FlowDesk Service Worker ──
 const CACHE_NAME = 'flowdesk-v2';
-const REPO = '/Workflow';
+// Auto-detect repo path at runtime
+const REPO = self.location.pathname.replace('/sw.js', '');
 const ASSETS = [
   REPO + '/',
   REPO + '/index.html',
@@ -21,9 +22,12 @@ const ASSETS = [
 self.addEventListener('install', e => {
   console.log('[SW] Installing...');
   e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => {
+      // Cache each asset individually so one failure doesn't break everything
+      return Promise.allSettled(
+        ASSETS.map(url => cache.add(url).catch(err => console.warn('[SW] Could not cache:', url, err)))
+      );
+    }).then(() => self.skipWaiting())
   );
 });
 
