@@ -89,10 +89,20 @@ function pomoComplete() {
     pSessId=null;
     playSound('work');
     notify('Pomodoro complete!',`Time for a ${S.settings.breakMin}-min break 🎉`,'🍅');
+    // Debug
+    console.log('[Pomo] Complete — Notification.permission:', Notification.permission);
+    console.log('[Pomo] swRegistration:', swRegistration);
+    console.log('[Pomo] swRegistration.active:', swRegistration?.active);
+    // Fire SW notification (works when tab is in background)
+    notifyViaSW('POMO_COMPLETE', { body: `Great work! Time for a ${S.settings.breakMin}-min break.` });
+    // Send push to all devices via Edge Function
+    sendPush('🍅 Pomodoro Complete!', `Great work! Time for a ${S.settings.breakMin}-min break.`);
     setPMode('break');renderPomo();
   } else {
     playSound('break');
     notify('Break over','Ready to focus? ⚡','☕');
+    notifyViaSW('BREAK_COMPLETE', {});
+    sendPush('☕ Break Over!', 'Ready to focus? Start your next session.');
     setPMode('work');
   }
 }
