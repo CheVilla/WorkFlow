@@ -71,7 +71,27 @@ async function initPushNotifications() {
     console.warn('[Push] Init error:', e);
   }
 }
+async function requestNotifPermission() {
+  try {
+    const permission = await Notification.requestPermission();
+    console.log('[Push] Permission:', permission);
+    if (permission === 'granted') {
+      hideNotifPrompt();
+      notify('🔔 Notifications enabled', 'You\'ll get alerts for deadlines and pomodoros', '✅');
+      await subscribeToPush();
+      setTimeout(checkDeadlinesOnLoad, 1000);
+    } else {
+      notify('Notifications blocked', 'You can enable them in browser settings', '⚠️');
+    }
+  } catch(e) {
+    console.warn('[Push] Permission error:', e);
+  }
+}
 
+function hideNotifPrompt() {
+  const el = document.getElementById('notif-prompt');
+  if (el) el.style.display = 'none';
+}
 async function subscribeToPush() {
   if (!swRegistration) return;
   try {
