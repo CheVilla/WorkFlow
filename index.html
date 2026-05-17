@@ -114,6 +114,14 @@
           </div>
           <label class="fl">Link to task</label>
           <select class="psel" id="ptask"><option value="">— No task —</option></select>
+          <div id="notif-prompt" style="background:var(--accent-bg);border:1px solid var(--accent);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px">
+            <i class="ri-notification-line" style="font-size:20px;color:var(--accent)"></i>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Enable notifications</div>
+              <div style="font-size:11px;color:var(--text2)">Get alerts for pomodoros and deadlines</div>
+            </div>
+            <button class="btn btnp" style="padding:6px 12px;font-size:12px" onclick="requestNotifPermission()">Enable</button>
+          </div>
           <div class="pset">
             <h4>Settings</h4>
             <div class="pset-row"><label>Work (min)</label><input type="number" id="swrk" min="1" max="90" value="25" onchange="updPS()"/></div>
