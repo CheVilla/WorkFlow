@@ -119,6 +119,7 @@ function renderAll() {
 // ── BOOT ──
 document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', () => { try { getACtx(); } catch(e) {} }, {once:true});
+  initPushNotifications();
   window.addEventListener('resize', () => { if(S.view==='calendar') renderCal(); });
   document.addEventListener('keydown', e => {
     if(e.key==='Escape') { closeTaskModal(); closeProjModal(); closeConfirm(); }
