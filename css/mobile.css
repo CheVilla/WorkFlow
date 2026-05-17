@@ -1,0 +1,50 @@
+@media(max-width:640px){
+  #sidebar{display:none}
+  #bnav{display:flex}
+  #content{padding-bottom:var(--bnav)}
+  #fab{display:flex}
+  .topbar{padding:10px 14px}
+  .topbar h1{font-size:15px}
+  .tacts{display:none}
+  .dgrid{grid-template-columns:1fr 1fr;padding:12px 12px 0;gap:8px}
+  .sc{padding:12px}
+  .sv{font-size:20px}
+  .dbody{grid-template-columns:1fr;padding:12px;gap:12px}
+  .panel{padding:12px}
+  .kwrap{padding:10px}
+  .kcol{flex:0 0 80vw;max-height:calc(100vh - 150px)}
+  .cwrap{padding:10px}
+  .cal-day{min-height:44px;padding:4px 3px}
+  .day-num{font-size:11px}
+  .cal-dn{font-size:9px}
+  .pdisp{padding:24px 16px 20px}
+  .ptime{font-size:56px}
+  .fr2{grid-template-columns:1fr}
+  .modal{max-height:92vh;padding:16px}
+  .mx-grid{grid-template-columns:1fr;grid-template-rows:auto;min-height:auto}
+  .mx-quad{min-height:160px}
+  #sync{top:auto;bottom:calc(var(--bnav) + 8px);right:10px}
+  .notif{right:8px;left:8px;max-width:none}
+}
+
+@media(min-width:641px){
+  .moverlay{align-items:center}
+  .modal{border-radius:14px;max-width:520px;width:100%}
+}
+
+/* PRINT STYLES — calendar */
+@media print{
+  #sidebar,#bnav,#fab,#sync,.topbar,.tacts,
+  .view:not(#view-calendar),
+  .cal-hdr .btn{display:none!important}
+  #app{display:block;height:auto;overflow:visible}
+  #main{display:block}
+  #content{overflow:visible}
+  #view-calendar{display:block!important;height:auto}
+  .cwrap{padding:8px}
+  .cal-month{font-size:20px;text-align:center;display:block;margin-bottom:8px}
+  .cal-day{min-height:80px;border:1px solid #ccc;break-inside:avoid}
+  .cal-task{font-size:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:white;color:black;font-size:12px}
+  .cal-grid{gap:2px}
+}
