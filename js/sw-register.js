@@ -4,7 +4,7 @@ let swReady = null;
 if ('serviceWorker' in navigator) {
   swReady = new Promise(async (resolve) => {
     try {
-      const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+      const reg = await navigator.serviceWorker.register('/Workflow/sw.js', { scope: '/Workflow/' });
       console.log('[SW] Registered:', reg.scope);
       setInterval(() => reg.update(), 60000);
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
