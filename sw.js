@@ -1,19 +1,20 @@
 // ── FlowDesk Service Worker ──
 const CACHE_NAME = 'flowdesk-v2';
+const REPO = '/Workflow';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/main.css',
-  '/css/components.css',
-  '/css/views.css',
-  '/css/mobile.css',
-  '/js/app.js',
-  '/js/db.js',
-  '/js/render.js',
-  '/js/pomodoro.js',
-  '/js/modals.js',
-  '/js/notify.js',
-  '/js/sw-register.js',
+  REPO + '/',
+  REPO + '/index.html',
+  REPO + '/css/main.css',
+  REPO + '/css/components.css',
+  REPO + '/css/views.css',
+  REPO + '/css/mobile.css',
+  REPO + '/js/app.js',
+  REPO + '/js/db.js',
+  REPO + '/js/render.js',
+  REPO + '/js/pomodoro.js',
+  REPO + '/js/modals.js',
+  REPO + '/js/notify.js',
+  REPO + '/js/sw-register.js',
 ];
 
 // ── INSTALL — cache all assets ──
